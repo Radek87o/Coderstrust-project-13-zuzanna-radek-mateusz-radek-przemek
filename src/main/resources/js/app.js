@@ -24,7 +24,7 @@ class App extends React.Component {
     }
 
     render() {
-        return (
+        return [
             <div className="container-fluid">
                  <div className="row">
                     <div className="col-md-4">
@@ -38,10 +38,7 @@ class App extends React.Component {
                     </div>
                  </div>
             </div>
-            <InvoiceByIssuedDate/>
-            <InvoiceList invoices={this.state.invoices}/>
-            <InvoiceList invoices={this.state.invoices} update={this.updateInvoices}/>
-        )
+        ]
     }
 }
 
@@ -135,17 +132,17 @@ class InvoiceByIssuedDate extends React.Component{
 
     searchByIssuedDate(startDate, endDate) {
         if(startDate == '' || endDate == ''){
-            $notify("Start date or end date cannot be empty", "error");
-        }
-        else{
+            $.notify("Start date or end date cannot be empty", "error");
+        } else {
             axios.get('/invoices/byIssuedDate?startDate='+startDate+'&endDate='+endDate, {
-            }).then(response=>{
+            }).then(response => {
+                $.notify("Invoices filtered.", "success");
                 this.props.update([response.data]);
-            }).catch(function (error){
+            }).catch(function (error) {
                 if(error.response.status == 400){
-                    $notify("Incorrect issued dates", "error")
+                    $.notify("Incorrect issued dates", "error")
                 } else {
-                    $notify("An error occurred during searching invoice by issued date.", "error")
+                    $.notify("An error occurred during searching invoice by issued date.", "error")
                 }
             });
         }
@@ -162,8 +159,8 @@ class InvoiceByIssuedDate extends React.Component{
 
             return(
                 <div className="input-group">
-                    <input type="text" className="form-control" placeholder="Start date" value={this.state.updateStartDate} onChange={value => this.updateStartDate(value)}/>
-                    <input type="text" className="form-control" placeholder="End date" value={this.state.updateEndDate} onChange={value => this.updateEndDate(value)}/>
+                    <input type="text" className="form-control" placeholder="Start date" value={this.state.startDate} onChange={value => this.updateStartDate(value)}/>
+                    <input type="text" className="form-control" placeholder="End date" value={this.state.endDate} onChange={value => this.updateEndDate(value)}/>
                     <div className="input-group-append" id="button-addon4">
                         <button className="btn btn-success btn-outline-secondary" type="button" update={this.updateInvoices} onClick={() => this.searchByIssuedDate(this.state.startDate, this.state.endDate)}>Search</button>
                         <button className="btn btn-error btn-outline-secondary" type="button" update={this.updateInvoices} onClick={() => this.clear()}>Clear</button>
